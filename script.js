@@ -30,8 +30,8 @@ let solo = {
 
 let yearSongs = 
 {
- "2025": [""],
- "2024": ["روح وحياة", "الراجل العاقل", "كتابي جواه حكايات", "أصفار الكتاب المقدس", "اوبن بوك"]   
+ "2025": [{ name: "عايشين معاك هنا", index: 51 }, { name: "يسوع صديقي", index: 52 }, { name: "سما بتسبح", index: 53 }],
+ "2024": [{ name: "روح وحياة", index: 1 }, { name: "الراجل العاقل", index: 2 }, { name: "كتابي جواه حكايات", index: 3}, { name: "أصفار الكتاب المقدس", index: 4}, { name: "اوبن بوك", index: 5 }]   
 }
 
 init();
@@ -70,8 +70,8 @@ function updateControlsDisabledState() {
 function handleYearChange(e) {
     currentYear = e.target.value;
     let filesString = '<option value="null" selected>اختر</option>';
-    yearSongs[currentYear].forEach((file, length) => {
-    filesString += `<option value="${length+1}">${file}</option>`
+    yearSongs[currentYear].forEach(file => {
+    filesString += `<option value="${file.index}">${file.name}</option>`
     })
     document.querySelector("#files").innerHTML = filesString;
 }
