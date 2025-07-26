@@ -30,7 +30,7 @@ let solo = {
 
 let yearSongs = 
 {
- "2025": [{ name: "عايشين معاك هنا", index: 51 }, { name: "يسوع صديقي", index: 52 }, { name: "سما بتسبح", index: 53 }],
+ "2025": [{ name: "عايشين معاك في هنا", index: 51 }, { name: "يسوع صديقي", index: 52 }, { name: "سما بتسبح", index: 53 }],
  "2024": [{ name: "روح وحياة", index: 1 }, { name: "الراجل العاقل", index: 2 }, { name: "كتابي جواه حكايات", index: 3}, { name: "أصفار الكتاب المقدس", index: 4}, { name: "اوبن بوك", index: 5 }]   
 }
 
