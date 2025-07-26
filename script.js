@@ -18,7 +18,7 @@ let isProgrammaticScroll = false;
 let currentYear = '2025';
 let currentSong = null;
 let running = false;
-let autoPlay = true;
+let autoPlay = false;
 let captions = {};
 let formattedCaptions = {};
 let solo = {
@@ -82,15 +82,15 @@ function handleSongChange(e) {
 
     currentSong = songId;
 
-    loadLyrics(`caption/${songId}3.txt`);
+    loadLyrics(`lyrics/${songId}3.txt`);
 
     updateControlsDisabledState();
 
     if (mmaSelect.value === 'null' || mmaSelect.value === 'lyr') return;
 
     running = false;
-    miaudio.src = `files/${songId}1.mp3`;
-    maudio.src = `files/${songId}2.mp3`;
+    miaudio.src = `audio/${songId}1.mp3`;
+    maudio.src = `audio/${songId}2.mp3`;
 
     if (solo.songId !== songId) resetSolo();
 
@@ -125,8 +125,8 @@ function handlePlaybackModeChange(e) {
     }
 
     if (!miaudio.src || !maudio.src) {
-        miaudio.src = `files/${currentSong}1.mp3`;
-        maudio.src = `files/${currentSong}2.mp3`;
+        miaudio.src = `audio/${currentSong}1.mp3`;
+        maudio.src = `audio/${currentSong}2.mp3`;
     }
 
     if (autoPlay) playAudio();
