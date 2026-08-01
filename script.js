@@ -30,7 +30,7 @@ let solo = {
 
 let yearSongs = 
 {
- "2025": [{ name: "عايشين معاك في هنا", index: 51 }, { name: "يسوع صديقي", index: 52 }, { name: "سما بتسبح", index: 53 }, { name: 'لازم يشوفوك فيّ', index: 54 }],
+ "2025": [{ name: "عايشين معاك في هنا", index: 1 }, { name: "يسوع صديقي", index: 2 }, { name: "سما بتسبح", index: 3 }, { name: 'لازم يشوفوك فيّ', index: 4 }],
  "2024": [{ name: "روح وحياة", index: 1 }, { name: "الراجل العاقل", index: 2 }, { name: "كتابي جواه حكايات", index: 3}, { name: "أسفار الكتاب المقدس", index: 4}, { name: "اوبن بوك", index: 5 }]   
 }
 
@@ -82,15 +82,15 @@ function handleSongChange(e) {
 
     currentSong = songId;
 
-    loadLyrics(`lyrics/${songId}3.txt`);
+    loadLyrics(`lyrics/${songId}.txt`);
 
     updateControlsDisabledState();
 
     if (mmaSelect.value === 'null' || mmaSelect.value === 'lyr') return;
 
     running = false;
-    miaudio.src = `audio/${songId}1.mp3`;
-    maudio.src = `audio/${songId}2.mp3`;
+    miaudio.src = `files/${currentYear}/vocal/${songId}.mp3`;
+    maudio.src = `files/${currentYear}/music/${songId}.mp3`;
 
     if (solo.songId !== songId) resetSolo();
 
@@ -125,8 +125,8 @@ function handlePlaybackModeChange(e) {
     }
 
     if (!miaudio.src || !maudio.src) {
-        miaudio.src = `audio/${currentSong}1.mp3`;
-        maudio.src = `audio/${currentSong}2.mp3`;
+        miaudio.src = `files/${currentYear}/vocal/${songId}.mp3`;
+        maudio.src = `files/${currentYear}/music/${songId}.mp3`;
     }
 
     if (autoPlay) playAudio();
