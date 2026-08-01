@@ -125,8 +125,8 @@ function handlePlaybackModeChange(e) {
     }
 
     if (!miaudio.src || !maudio.src) {
-        miaudio.src = `files/${currentYear}/vocal/${songId}.mp3`;
-        maudio.src = `files/${currentYear}/music/${songId}.mp3`;
+        miaudio.src = `files/${currentYear}/vocal/${currentSong}.mp3`;
+        maudio.src = `files/${currentYear}/music/${currentSong}.mp3`;
     }
 
     if (autoPlay) playAudio();
