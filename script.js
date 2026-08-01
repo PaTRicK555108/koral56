@@ -82,7 +82,7 @@ function handleSongChange(e) {
 
     currentSong = songId;
 
-    loadLyrics(`lyrics/${songId}.txt`);
+    loadLyrics(`lyrics/${currentYear}/${songId}.txt`);
 
     updateControlsDisabledState();
 
