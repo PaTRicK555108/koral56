@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ترانيم كورال · خدمة 5 و 6</title>
+  <meta name="description" content="ترانيم كورال مع تحكم كامل، عرض كلمات متزامن، وضع ليلي ونهاري">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Google Font (Cairo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Cairo', 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-body);
+      color: var(--text-primary);
+      transition: background 0.3s, color 0.2s;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    /* ----- LIGHT / DARK THEME (css variables) ----- */
+    :root {
+      --bg-body: #f2f5f9;
+      --bg-card: #ffffff;
+      --bg-card-alt: #f8faff;
+      --text-primary: #1e293b;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --border-light: #e9edf4;
+      --shadow-card: 0 12px 30px -8px rgba(0, 20, 40, 0.08);
+      --shadow-hover: 0 20px 40px -12px rgba(0, 20, 40, 0.15);
+      --accent: #2a6f97;
+      --accent-light: #4a8db7;
+      --accent-glow: rgba(42, 111, 151, 0.2);
+      --highlight: #0b7e4b;
+      --highlight-bg: #e3f5ec;
+      --solo-active: #0b7e4b;
+      --solo-inactive: #b45309;
+      --btn-play: #2a6f97;
+      --btn-play-hover: #1d4e6f;
+      --slider-track: #dce3ec;
+      --slider-thumb: #2a6f97;
+      --input-bg: #ffffff;
+      --input-border: #d1d9e6;
+      --input-focus: #2a6f97;
+      --lyrics-line-hover: rgba(42, 111, 151, 0.08);
+      --scrollbar-track: #eef2f6;
+      --scrollbar-thumb: #bcc9d9;
+    }
+
+    [data-theme="dark"] {
+      --bg-body: #121826;
+      --bg-card: #1e2638;
+      --bg-card-alt: #252e44;
+      --text-primary: #edf2f7;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border-light: #2d384e;
+      --shadow-card: 0 12px 30px -8px rgba(0, 0, 0, 0.6);
+      --shadow-hover: 0 20px 40px -12px #00000080;
+      --accent: #5b9fc7;
+      --accent-light: #7bb8db;
+      --accent-glow: rgba(91, 159, 199, 0.25);
+      --highlight: #3fc18c;
+      --highlight-bg: #1f3d32;
+      --solo-active: #3fc18c;
+      --solo-inactive: #e07c3e;
+      --btn-play: #5b9fc7;
+      --btn-play-hover: #3f7fa3;
+      --slider-track: #334155;
+      --slider-thumb: #5b9fc7;
+      --input-bg: #252e44;
+      --input-border: #3b4864;
+      --input-focus: #5b9fc7;
+      --lyrics-line-hover: rgba(91, 159, 199, 0.12);
+      --scrollbar-track: #1e2638;
+      --scrollbar-thumb: #3b4864;
+    }
+
+    /* ----- SCROLLBAR ----- */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--scrollbar-track); border-radius: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 8px; }
+
+    /* ----- CARD CONTAINER ----- */
+    .app-card {
+      max-width: 820px;
+      width: 100%;
+      background: var(--bg-card);
+      border-radius: 2.5rem;
+      padding: 2rem 2rem 2.2rem;
+      box-shadow: var(--shadow-card);
+      transition: background 0.3s, box-shadow 0.3s;
+      border: 1px solid var(--border-light);
+    }
+
+    /* ----- HEADER ----- */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .header-title h1 {
+      font-weight: 700;
+      font-size: 1.9rem;
+      letter-spacing: -0.3px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .header-title h1 span {
+      font-weight: 400;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      background: var(--bg-card-alt);
+      padding: 0.1rem 0.9rem;
+      border-radius: 40px;
+      border: 1px solid var(--border-light);
+    }
+    .theme-toggle {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-light);
+      border-radius: 60px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .theme-toggle:hover {
+      background: var(--border-light);
+      transform: scale(1.02);
+    }
+
+    /* ----- CONTROLS (selects) ----- */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 1rem 1.2rem;
+      margin-bottom: 1.8rem;
+    }
+    .select-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+    .form-select {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 60px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      transition: 0.2s;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: left 1rem center;
+      background-size: 14px;
+    }
+    .form-select:focus {
+      border-color: var(--input-focus);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    /* ----- PLAYER CARD ----- */
+    .player-section {
+      background: var(--bg-card-alt);
+      border-radius: 2rem;
+      padding: 1.2rem 1.5rem 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border-light);
+      transition: background 0.3s;
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.8rem 1.2rem;
+    }
+    .play-btn {
+      background: var(--btn-play);
+      border: none;
+      border-radius: 60px;
+      width: 54px;
+      height: 54px;
+      color: white;
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 12px rgba(42, 111, 151, 0.25);
+      flex-shrink: 0;
+    }
+    .play-btn:hover:not(:disabled) {
+      background: var(--btn-play-hover);
+      transform: scale(1.04);
+    }
+    .play-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .time-control {
+      flex: 2;
+      min-width: 140px;
+    }
+    .slider {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--slider-track);
+      border-radius: 10px;
+      outline: none;
+      transition: background 0.2s;
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--slider-thumb);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: 0.15s;
+    }
+    .slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    .slider::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--slider-thumb); cursor: pointer;
+      border: none;
+    }
+    .time-display {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+      font-weight: 500;
+    }
+
+    .volume-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      min-width: 100px;
+      flex: 1;
+    }
+    .volume-wrap i {
+      color: var(--text-muted);
+      font-size: 1.2rem;
+    }
+    .volume-wrap .slider {
+      width: 80px;
+    }
+
+    /* solo button */
+    .solo-btn {
+      background: transparent;
+      border: 1.5px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.4rem 1.2rem;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-top: 0.6rem;
+      background: var(--bg-card);
+    }
+    .solo-btn i { font-size: 1.1rem; }
+    .solo-btn.active {
+      border-color: var(--solo-active);
+      color: var(--solo-active);
+      background: var(--highlight-bg);
+    }
+    .solo-btn.selecting {
+      border-color: var(--solo-inactive);
+      color: var(--solo-inactive);
+      background: #fff2e6;
+    }
+    [data-theme="dark"] .solo-btn.selecting { background: #3d2c1f; }
+
+    /* ----- LYRICS ----- */
+    .lyrics-wrapper {
+      background: var(--bg-card-alt);
+      border-radius: 2rem;
+      padding: 1.5rem 1rem;
+      border: 1px solid var(--border-light);
+      max-height: 360px;
+      overflow-y: auto;
+      transition: background 0.3s;
+    }
+    .lyrics {
+      text-align: center;
+      font-size: 1.2rem;
+      line-height: 2.2;
+      font-weight: 400;
+      color: var(--text-primary);
+      padding: 0.2rem 0.5rem;
+    }
+    .line {
+      display: inline-block;
+      padding: 0.1rem 0.5rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.15s;
+      font-weight: 400;
+    }
+    .line:hover {
+      background: var(--lyrics-line-hover);
+    }
+    .line.highlight {
+      background: var(--highlight-bg);
+      color: var(--highlight);
+      font-weight: 700;
+      transform: scale(1.02);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .lyrics .br { display: block; height: 0.4rem; }
+
+    /* responsive */
+    @media (max-width: 640px) {
+      .app-card { padding: 1.5rem; border-radius: 2rem; }
+      .header-title h1 { font-size: 1.5rem; }
+      .controls-grid { grid-template-columns: 1fr; }
+      .player-controls { flex-direction: column; align-items: stretch; }
+      .volume-wrap { justify-content: flex-start; }
+      .volume-wrap .slider { width: 100%; }
+      .solo-btn { align-self: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-card" id="app">
+  <!-- header -->
+  <div class="header">
+    <div class="header-title">
+      <h1>ترانيم كورال <span>خدمة 5 و 6</span></h1>
+    </div>
+    <button class="theme-toggle" id="themeToggle" aria-label="تبديل الوضع">
+      <i class="bi bi-moon-stars" id="themeIcon"></i>
+    </button>
+  </div>
+
+  <!-- selects -->
+  <div class="controls-grid">
+    <div class="select-group">
+      <label for="year">السنة</label>
+      <select id="year" class="form-select">
+        <option value="2025" selected>2025</option>
+        <option value="2024">2024</option>
+      </select>
+    </div>
+    <div class="select-group">
+      <label for="files">الترنيمة</label>
+      <select id="files" class="form-select">
+        <option value="null" selected>اختر</option>
+        <option value="51">عايشين معاك في هنا</option>
+        <option value="52">يسوع صديقي</option>
+        <option value="53">سما بتسبح</option>
+        <option value="54">لازم يشوفوك فيّ</option>
+      </select>
+    </div>
+    <div class="select-group">
+      <label for="mma">النوع</label>
+      <select id="mma" class="form-select">
+        <option value="null" selected>اختر</option>
+        <option value="mi">موسيقى وكورال</option>
+        <option value="m">موسيقى فقط</option>
+        <option value="lyr">كلمات فقط</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- player -->
+  <div class="player-section" id="playerSection">
+    <div class="player-controls">
+      <button class="play-btn" id="play-pause" disabled>
+        <i class="bi bi-play-fill"></i>
+      </button>
+      <div class="time-control">
+        <input type="range" id="time-slider" class="slider" min="0" max="100" value="0" step="1" disabled>
+        <div class="time-display">
+          <span id="current-time">0:00</span>
+          <span id="total-time">0:00</span>
+        </div>
+      </div>
+      <div class="volume-wrap">
+        <i class="bi bi-volume-up"></i>
+        <input type="range" id="volume-slider" class="slider" min="0" max="100" value="50">
+      </div>
+    </div>
+    <button id="solo-btn" class="solo-btn" style="display:none;">
+      <i class="bi bi-mic-fill"></i> تحديد الصولو
+    </button>
+  </div>
+
+  <!-- lyrics -->
+  <div class="lyrics-wrapper" id="lyricsWrapper">
+    <div id="caption" class="lyrics"></div>
+  </div>
+
+  <!-- audio elements (hidden) -->
+  <audio id="mi"></audio>
+  <audio id="mu"></audio>
+</div>
+
+<script>
+  (function() {
+    // ---------- DOM refs ----------
+    const miaudio = document.getElementById('mi');
+    const maudio = document.getElementById('mu');
+    const yearSelect = document.getElementById('year');
+    const filesSelect = document.getElementById('files');
+    const mmaSelect = document.getElementById('mma');
+    const playPauseBtn = document.getElementById('play-pause');
+    const timeSlider = document.getElementById('time-slider');
+    const volumeSlider = document.getElementById('volume-slider');
+    const currentTimeDisplay = document.getElementById('current-time');
+    const totalTimeDisplay = document.getElementById('total-time');
+    const soloBtn = document.getElementById('solo-btn');
+    const captionElement = document.getElementById('caption');
+    const playerSection = document.getElementById('playerSection');
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+
+    // ---------- state ----------
+    let currentYear = '2025';
+    let currentSong = null;          // song id (string)
+    let running = false;
+    let autoPlay = true;
+    let captions = {};
+    let solo = { start: null, end: null, status: 'inactive', songId: null };
+    let isUserScrolling = false;
+    let scrollTimeout = null;
+    let isProgrammaticScroll = false;
+
+    const yearSongs = {
+      "2025": [{ name: "عايشين معاك في هنا", index: 1 }, { name: "يسوع صديقي", index: 2 }, { name: "سما بتسبح", index: 3 }, { name: 'لازم يشوفوك فيّ', index: 4 }],
+      "2024": [{ name: "روح وحياة", index: 1 }, { name: "الراجل العاقل", index: 2 }, { name: "كتابي جواه حكايات", index: 3 }, { name: "أسفار الكتاب المقدس", index: 4 }, { name: "اوبن بوك", index: 5 }]
+    };
+
+    // ---------- theme ----------
+    function setTheme(dark) {
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      themeIcon.className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars';
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    }
+    function toggleTheme() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      setTheme(!isDark);
+    }
+    // load theme
+    (function initTheme() {
+      const stored = localStorage.getItem('theme');
+      if (stored === 'dark') setTheme(true);
+      else if (stored === 'light') setTheme(false);
+      else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme(true);
+      else setTheme(false);
+    })();
+    themeToggle.addEventListener('click', toggleTheme);
+
+    // ---------- helpers ----------
+    function formatTime(seconds) {
+      if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+
+    // ---------- solo cookie ----------
+    function loadSoloSettings() {
+      const raw = getCookie('solo');
+      if (raw) {
+        const parts = raw.split(':');
+        if (parts.length === 3) {
+          const [songId, start, end] = parts;
+          solo = {
+            start: parseFloat(start),
+            end: parseFloat(end),
+            status: 'active',
+            songId: songId
+          };
+          soloBtn.classList.add('active');
+          soloBtn.classList.remove('selecting');
+          soloBtn.innerHTML = '<i class="bi bi-mic-fill"></i> إزالة الصولو';
+          soloBtn.style.display = 'inline-flex';
+        }
+      }
+    }
+    function saveSoloSettings() {
+      document.cookie = `solo=${solo.songId}:${solo.start}:${solo.end}; path=/; max-age=${60 * 60 * 24 * 30}`;
+    }
+    function resetSolo() {
+      solo = { start: null, end: null, status: 'inactive', songId: null };
+      soloBtn.classList.remove('active', 'selecting');
+      soloBtn.innerHTML = '<i class="bi bi-mic-fill"></i> تحديد الصولو';
+      document.cookie = 'solo=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      maudio.muted = true;
+      miaudio.muted = false;
+      soloBtn.style.display = 'none';
+    }
+
+    // ---------- update UI ----------
+    function updatePlayPauseButton(isPlaying) {
+      const icon = playPauseBtn.querySelector('i');
+      icon.className = isPlaying ? 'bi bi-pause-fill' : 'bi bi-play-fill';
+    }
+
+    function updateControlsDisabledState() {
+      const mode = mmaSelect.value;
+      const disabled = (mode === 'null' || mode === '');
+      playPauseBtn.disabled = disabled;
+      timeSlider.disabled = disabled;
+      if (mode === 'lyr') {
+        playerSection.style.display = 'none';
+      } else {
+        playerSection.style.display = 'block';
+      }
+    }
+
+    // ---------- audio controls ----------
+    function playAudio() {
+      if (!miaudio.src) return;
+      miaudio.play().catch(() => {});
+      maudio.play().catch(() => {});
+      running = true;
+      updatePlayPauseButton(true);
+    }
+    function pauseAudio() {
+      miaudio.pause();
+      maudio.pause();
+      running = false;
+      updatePlayPauseButton(false);
+    }
+    function togglePlayPause() {
+      if (miaudio.paused) playAudio();
+      else pauseAudio();
+    }
+
+    // ---------- load lyrics ----------
+    async function loadLyrics(url) {
+      try {
+        const resp = await fetch(url);
+        const text = await resp.text();
+        captions = {};
+        captionElement.innerHTML = '';
+        let lastSeconds = 0;
+        const lines = text.split('\n');
+        for (let line of lines) {
+          line = line.trim();
+          if (line === '') {
+            const br = document.createElement('span');
+            br.className = 'br';
+            captionElement.appendChild(br);
+            continue;
+          }
+          const [timeStr, ...lyricParts] = line.split(' ');
+          const lyric = lyricParts.join(' ');
+          const [mins, secs] = timeStr.split(':').map(Number);
+          const seconds = mins * 60 + secs;
+          lastSeconds = seconds;
+          captions[seconds] = lyric;
+          const span = document.createElement('span');
+          span.className = 'line';
+          span.textContent = lyric;
+          span.dataset.time = seconds;
+          span.addEventListener('click', () => {
+            if (solo.status === 'selecting-start' || solo.status === 'selecting-end') {
+              handleLyricClickForSolo(seconds);
+              return;
+            }
+            if (mmaSelect.value === 'lyr') return;
+            miaudio.currentTime = seconds;
+            maudio.currentTime = seconds;
+            if (miaudio.paused) playAudio();
+          });
+          captionElement.appendChild(span);
+          captionElement.appendChild(document.createTextNode(' '));
+        }
+        // highlight first line if any
+        const firstLine = captionElement.querySelector('.line');
+        if (firstLine) firstLine.classList.add('highlight');
+      } catch (e) {
+        console.error('loadLyrics error', e);
+        captionElement.textContent = 'حدث خطأ في تحميل الكلمات';
+      }
+    }
+
+    // ---------- highlight current lyric ----------
+    function highlightCurrentLyrics() {
+      const currentTime = miaudio.currentTime;
+      const lines = Array.from(captionElement.querySelectorAll('.line'));
+      if (!lines.length) return;
+      let closest = null;
+      let minDiff = Infinity;
+      for (let line of lines) {
+        const t = parseFloat(line.dataset.time);
+        if (t <= currentTime) {
+          const diff = currentTime - t;
+          if (diff < minDiff) { minDiff = diff; closest = line; }
+        }
+      }
+      lines.forEach(l => l.classList.remove('highlight'));
+      if (closest) {
+        closest.classList.add('highlight');
+        if (!isUserScrolling && !isProgrammaticScroll) {
+          isProgrammaticScroll = true;
+          closest.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => isProgrammaticScroll = false, 80);
+        }
+      } else {
+        if (lines[0]) {
+          lines[0].classList.add('highlight');
+          if (!isUserScrolling && !isProgrammaticScroll) {
+            isProgrammaticScroll = true;
+            lines[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => isProgrammaticScroll = false, 80);
+          }
+        }
+      }
+    }
+
+    // ---------- solo logic ----------
+    function handleLyricClickForSolo(time) {
+      if (solo.status === 'selecting-start') {
+        solo.start = time;
+        solo.status = 'selecting-end';
+        soloBtn.classList.remove('selecting');
+        soloBtn.classList.add('selecting');
+        soloBtn.innerHTML = '<i class="bi bi-mic-fill"></i> انقر على نهاية الصولو';
+      } else if (solo.status === 'selecting-end') {
+        solo.end = time;
+        solo.status = 'active';
+        solo.songId = currentSong;
+        soloBtn.classList.remove('selecting');
+        soloBtn.classList.add('active');
+        soloBtn.innerHTML = '<i class="bi bi-mic-fill"></i> إزالة الصولو';
+        saveSoloSettings();
+        autoPlay = true;
+        playAudio();
+      }
+    }
+
+    function handleSoloPlayback() {
+      if (solo.status !== 'active' || solo.songId !== currentSong) return;
+      const ct = miaudio.currentTime;
+      if (ct >= solo.start && ct <= solo.end) {
+        maudio.muted = false;
+        miaudio.muted = true;
+      } else {
+        maudio.muted = true;
+        miaudio.muted = false;
+      }
+    }
+
+    // ---------- event handlers ----------
+    function handleYearChange(e) {
+      currentYear = e.target.value;
+      const songs = yearSongs[currentYear] || [];
+      let html = '<option value="null" selected>اختر</option>';
+      songs.forEach(s => { html += `<option value="${s.index}">${s.name}</option>`; });
+      filesSelect.innerHTML = html;
+      // reset
+      if (currentSong) resetSolo();
+      currentSong = null;
+      miaudio.removeAttribute('src');
+      maudio.removeAttribute('src');
+      pauseAudio();
+      captionElement.innerHTML = '';
+      updateControlsDisabledState();
+    }
+
+    function handleSongChange(e) {
+      const songId = e.target.value;
+      if (songId === 'null') {
+        pauseAudio();
+        currentSong = null;
+        captionElement.innerHTML = '';
+        return;
+      }
+      currentSong = songId;
+      loadLyrics(`files/lyrics/${currentYear}/${songId}.txt`);
+      updateControlsDisabledState();
+
+      const mode = mmaSelect.value;
+      if (mode === 'lyr' || mode === 'null') return;
+
+      miaudio.src = `files/${currentYear}/vocal/${songId}.mp3`;
+      maudio.src = `files/${currentYear}/music/${songId}.mp3`;
+      miaudio.load(); maudio.load();
+
+      if (solo.songId !== songId) resetSolo();
+      maudio.muted = true;
+      miaudio.muted = false;
+
+      if (autoPlay) playAudio();
+      else updatePlayPauseButton(false);
+    }
+
+    function handlePlaybackModeChange(e) {
+      const mode = e.target.value;
+      updateControlsDisabledState();
+
+      if (!currentSong || currentSong === 'null') {
+        if (mode === 'lyr') playerSection.style.display = 'none';
+        else playerSection.style.display = 'block';
+        return;
+      }
+
+      if (mode === 'lyr') {
+        playerSection.style.display = 'none';
+        pauseAudio();
+        return;
+      } else {
+        playerSection.style.display = 'block';
+      }
+
+      if (!miaudio.src) {
+        miaudio.src = `files/${currentYear}/vocal/${currentSong}.mp3`;
+        maudio.src = `files/${currentYear}/music/${currentSong}.mp3`;
+      }
+
+      if (mode === 'mi') {
+        maudio.muted = true;
+        miaudio.muted = false;
+      } else if (mode === 'm') {
+        maudio.muted = false;
+        miaudio.muted = true;
+      } else {
+        pauseAudio();
+        return;
+      }
+
+      if (autoPlay) playAudio();
+      else updatePlayPauseButton(false);
+    }
+
+    function handleSoloButtonClick() {
+      if (solo.status === 'active') {
+        resetSolo();
+        return;
+      }
+      if (!currentSong) { alert('الرجاء اختيار ترنيمة أولاً'); return; }
+      solo.status = 'selecting-start';
+      soloBtn.classList.add('selecting');
+      soloBtn.innerHTML = '<i class="bi bi-mic-fill"></i> انقر على بداية الصولو';
+      soloBtn.style.display = 'inline-flex';
+      autoPlay = false;
+      if (!miaudio.paused) pauseAudio();
+      alert('الرجاء النقر على السطر الذي يحدد بداية الصولو');
+    }
+
+    // ---------- init ----------
+    function init() {
+      // populate years
+      yearSelect.value = '2025';
+      handleYearChange({ target: yearSelect });
+      // set default files list for 2025
+      const defaultSongs = yearSongs['2025'];
+      let html = '<option value="null" selected>اختر</option>';
+      defaultSongs.forEach(s => { html += `<option value="${s.index}">${s.name}</option>`; });
+      filesSelect.innerHTML = html;
+
+      loadSoloSettings();
+      miaudio.volume = 0.5;
+      maudio.volume = 0.5;
+      volumeSlider.value = 50;
+
+      // event listeners
+      yearSelect.addEventListener('change', handleYearChange);
+      filesSelect.addEventListener('change', handleSongChange);
+      mmaSelect.addEventListener('change', handlePlaybackModeChange);
+      playPauseBtn.addEventListener('click', togglePlayPause);
+      timeSlider.addEventListener('input', function(e) {
+        if (!miaudio.duration) return;
+        const val = e.target.value / 100;
+        const seek = val * miaudio.duration;
+        miaudio.currentTime = seek;
+        maudio.currentTime = seek;
+      });
+      volumeSlider.addEventListener('input', function(e) {
+        const vol = e.target.value / 100;
+        miaudio.volume = vol;
+        maudio.volume = vol;
+      });
+      miaudio.addEventListener('timeupdate', function() {
+        if (!miaudio.duration) return;
+        const progress = (miaudio.currentTime / miaudio.duration) * 100;
+        timeSlider.value = progress;
+        currentTimeDisplay.textContent = formatTime(miaudio.currentTime);
+        highlightCurrentLyrics();
+        handleSoloPlayback();
+      });
+      miaudio.addEventListener('loadedmetadata', function() {
+        totalTimeDisplay.textContent = formatTime(miaudio.duration);
+      });
+      miaudio.addEventListener('ended', function() {
+        running = false;
+        updatePlayPauseButton(false);
+      });
+      maudio.addEventListener('ended', function() {
+        running = false;
+        updatePlayPauseButton(false);
+      });
+      soloBtn.addEventListener('click', handleSoloButtonClick);
+
+      // scroll detection
+      const wrapper = document.getElementById('lyricsWrapper');
+      wrapper.addEventListener('scroll', function() {
+        if (isProgrammaticScroll) { isProgrammaticScroll = false; return; }
+        isUserScrolling = true;
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => { isUserScrolling = false; }, 2000);
+      });
+
+      // show solo button if solo cookie exists
+      if (solo.status === 'active') {
+        soloBtn.style.display = 'inline-flex';
+        soloBtn.classList.add('active');
+        soloBtn.innerHTML = '<i class="bi bi-mic-fill"></i> إزالة الصولو';
+      } else {
+        soloBtn.style.display = 'none';
+      }
+      updateControlsDisabledState();
+    }
+
+    init();
+  })();
+</script>
+</body>
+</html>
