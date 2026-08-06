@@ -388,7 +388,8 @@
     <div class="select-group">
       <label for="year">السنة</label>
       <select id="year" class="form-select">
-        <option value="2025" selected>2025</option>
+        <option value="2026" selected>2026</option>
+        <option value="2025">2025</option>
         <option value="2024">2024</option>
       </select>
     </div>
@@ -396,10 +397,7 @@
       <label for="files">الترنيمة</label>
       <select id="files" class="form-select">
         <option value="null" selected>اختر</option>
-        <option value="51">عايشين معاك في هنا</option>
-        <option value="52">يسوع صديقي</option>
-        <option value="53">سما بتسبح</option>
-        <option value="54">لازم يشوفوك فيّ</option>
+        <option value="1">احكيلنا بصوت أجراسك</option>
       </select>
     </div>
     <div class="select-group">
@@ -466,7 +464,7 @@
     const themeIcon = document.getElementById('themeIcon');
 
     // ---------- state ----------
-    let currentYear = '2025';
+    let currentYear = '2026';
     let currentSong = null;          // song id (string)
     let running = false;
     let autoPlay = true;
@@ -477,6 +475,7 @@
     let isProgrammaticScroll = false;
 
     const yearSongs = {
+      "2026": [{ name: "احكيلنا بصوت أجراسك", index: 1 }],
       "2025": [{ name: "عايشين معاك في هنا", index: 1 }, { name: "يسوع صديقي", index: 2 }, { name: "سما بتسبح", index: 3 }, { name: 'لازم يشوفوك فيّ', index: 4 }],
       "2024": [{ name: "روح وحياة", index: 1 }, { name: "الراجل العاقل", index: 2 }, { name: "كتابي جواه حكايات", index: 3 }, { name: "أسفار الكتاب المقدس", index: 4 }, { name: "اوبن بوك", index: 5 }]
     };

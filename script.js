@@ -15,7 +15,7 @@ let isUserScrolling = false;
 let scrollTimeout;
 let isProgrammaticScroll = false;
 
-let currentYear = '2025';
+let currentYear = '2026';
 let currentSong = null;
 let running = false;
 let autoPlay = true;
@@ -30,6 +30,7 @@ let solo = {
 
 let yearSongs = 
 {
+ "2026": [{ name: "احكيلنا بصوت أجراسك", index: 1 }],
  "2025": [{ name: "عايشين معاك في هنا", index: 1 }, { name: "يسوع صديقي", index: 2 }, { name: "سما بتسبح", index: 3 }, { name: 'لازم يشوفوك فيّ', index: 4 }],
  "2024": [{ name: "روح وحياة", index: 1 }, { name: "الراجل العاقل", index: 2 }, { name: "كتابي جواه حكايات", index: 3}, { name: "أسفار الكتاب المقدس", index: 4}, { name: "اوبن بوك", index: 5 }]   
 }
