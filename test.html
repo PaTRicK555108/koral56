@@ -757,7 +757,7 @@
     renderSongList();
     closeDrawer();
 
-    loadLyrics(`files/lyrics/${currentYear}/${songId}.txt`);
+    loadLyrics(`files/${currentYear}/lyrics/${songId}.txt`);
 
     if (!currentMode || currentMode === 'lyr'){
       if (currentMode === 'lyr') showReel();
