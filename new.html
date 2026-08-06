@@ -728,7 +728,7 @@
         return;
       }
       currentSong = songId;
-      loadLyrics(`files/lyrics/${currentYear}/${songId}.txt`);
+      loadLyrics(`files/${currentYear}/lyrics/${songId}.txt`);
       updateControlsDisabledState();
 
       const mode = mmaSelect.value;

@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>ترانيم كورال - خدمة 5و6 أولاد</title>
+<meta name="description" content="استمتع بترانيم الكورال مع تحكم كامل في التشغيل وعرض الكلمات المتزامنة">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2LMZ0Q29L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2LMZ0Q29L');
+</script>
+<style>
+  :root{
+    --bg:#EDF1E9;
+    --surface:#FFFFFF;
+    --surface-2:#E2E8DC;
+    --ink:#20241E;
+    --ink-soft:#5B6355;
+    --wine:#7A2E2E;
+    --gold:#B9891B;
+    --gold-bright:#E8C468;
+    --line:#D6DDCB;
+    --shadow:0 16px 40px -18px rgba(20,24,16,.28);
+    --dock-h:96px;
+    --font-display:'Amiri', serif;
+    --font-body:'Cairo', sans-serif;
+    color-scheme: light;
+  }
+  [data-theme="dark"]{
+    --bg:#10140D;
+    --surface:#1A2015;
+    --surface-2:#212A1A;
+    --ink:#ECEFE4;
+    --ink-soft:#9DA692;
+    --wine:#D06A6A;
+    --gold:#E8C468;
+    --gold-bright:#F4D98A;
+    --line:#2A331F;
+    --shadow:0 16px 44px -14px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--ink);
+    overflow:hidden;
+    transition: background .35s ease, color .35s ease;
+  }
+  button{ font-family:inherit; }
+
+  .app-shell{
+    height:100vh;
+    height:100dvh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ============ App bar ============ */
+  .appbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 14px 16px;
+    flex-shrink:0;
+  }
+  .icon-btn{
+    width:42px; height:42px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.05rem;
+    cursor:pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    transition: transform .18s ease;
+  }
+  .icon-btn:hover{ transform: scale(1.06); }
+  .icon-btn:active{ transform: scale(.92); }
+  .icon-btn.gold{ color: var(--gold); }
+
+  .brand{
+    text-align:center;
+    line-height:1.15;
+  }
+  .brand .title{
+    font-family: var(--font-display);
+    font-weight:700;
+    font-size: 1.25rem;
+    color: var(--ink);
+  }
+  .brand .sub{
+    display:block;
+    font-size:.68rem;
+    font-weight:700;
+    letter-spacing:.6px;
+    color: var(--gold);
+    margin-top:2px;
+  }
+
+  /* ============ Mode segmented tabs ============ */
+  .mode-tabs{
+    display:flex;
+    gap:6px;
+    padding: 0 16px 12px;
+    flex-shrink:0;
+  }
+  .mode-tab{
+    flex:1;
+    border:1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-weight:700;
+    font-size:.78rem;
+    padding: 9px 6px;
+    border-radius: 999px;
+    cursor:pointer;
+    transition: all .2s ease;
+    white-space:nowrap;
+  }
+  .mode-tab.active{
+    background: linear-gradient(145deg, var(--gold-bright), var(--gold));
+    color:#221803;
+    border-color: transparent;
+    box-shadow: 0 6px 16px -6px rgba(185,137,27,.55);
+  }
+
+  /* ============ Stage ============ */
+  .stage{
+    flex:1;
+    min-height:0;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 0 10px;
+  }
+
+  .empty-hint{
+    text-align:center;
+    color: var(--ink-soft);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    padding: 0 30px;
+  }
+  .empty-hint i{ font-size:2.4rem; color: var(--gold); opacity:.8; }
+  .empty-hint p{ font-size:.95rem; max-width:260px; }
+  .empty-hint button{
+    border:none;
+    background: var(--wine);
+    color:#fff;
+    padding: 10px 22px;
+    border-radius:999px;
+    font-weight:700;
+    font-size:.85rem;
+    cursor:pointer;
+  }
+
+  /* Teleprompter reel */
+  .reel-wrap{
+    display:none;
+    position:relative;
+    width:100%;
+    max-width: 640px;
+    height: 100%;
+    max-height: 380px;
+    overflow:hidden;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%);
+  }
+  .reel-wrap.show{ display:block; }
+  .reel{
+    position:absolute;
+    top:50%; left:0; right:0;
+    transform: translateY(0);
+    transition: transform .45s cubic-bezier(.22,.9,.35,1);
+  }
+  .reel .line{
+    display:block;
+    text-align:center;
+    font-family: var(--font-display);
+    padding: 9px 14px;
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    opacity:.32;
+    transform: scale(.86);
+    filter: blur(.3px);
+    transition: all .4s ease;
+    cursor:pointer;
+  }
+  .reel .line:hover{ opacity:.7; }
+  .reel .line.d0{
+    opacity:1;
+    color: var(--gold);
+    font-weight:700;
+    font-size: 1.7rem;
+    transform: scale(1);
+    filter:none;
+    text-shadow: 0 0 22px rgba(232,196,104,.4);
+  }
+  .reel .line.d1{ opacity:.62; font-size:1.25rem; transform: scale(.94); }
+  .reel .line.spacer{ height:0; padding:0; }
+
+  .now-marker{
+    position:absolute;
+    top:50%; left:50%;
+    transform: translate(-50%,-50%);
+    width: min(560px, 92%);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    pointer-events:none;
+    opacity:.55;
+  }
+  .now-marker::before, .now-marker::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .now-marker i{
+    color: var(--gold);
+    font-size:.85rem;
+  }
+  .now-marker i.beat{
+    animation: pulse 1.1s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ transform: scale(1); opacity:.6; }
+    50%{ transform: scale(1.35); opacity:1; }
+  }
+
+  /* ============ Solo toast ============ */
+  .solo-toast{
+    position:fixed;
+    left:50%;
+    bottom: calc(var(--dock-h) + 14px);
+    transform: translateX(-50%) translateY(12px);
+    background: var(--surface);
+    border: 1px solid var(--gold);
+    color: var(--ink);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size:.82rem;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    box-shadow: var(--shadow);
+    opacity:0;
+    pointer-events:none;
+    transition: all .25s ease;
+    z-index: 40;
+    white-space:nowrap;
+  }
+  .solo-toast.show{ opacity:1; transform: translateX(-50%) translateY(0); pointer-events:auto; }
+  .solo-toast button{
+    border:none; background: var(--wine); color:#fff;
+    width:22px; height:22px; border-radius:50%;
+    font-size:.7rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ============ Dock ============ */
+  .dock{
+    flex-shrink:0;
+    height: var(--dock-h);
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    display:flex;
+    flex-direction:column;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .scrub{
+    -webkit-appearance:none;
+    appearance:none;
+    width:100%;
+    height:4px;
+    background: var(--line);
+    cursor:pointer;
+    outline:none;
+  }
+  .scrub::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:0; height:0;
+  }
+  .scrub:disabled{ cursor:not-allowed; opacity:.5; }
+  .scrub::-moz-range-thumb{ width:0; height:0; border:none; }
+
+  .dock-row{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding: 6px 16px 8px;
+    min-width:0;
+  }
+
+  .track-info{
+    min-width:0;
+    flex: 1 1 90px;
+  }
+  .track-info .name{
+    font-weight:700;
+    font-size:.86rem;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .track-info .time{
+    font-size:.72rem;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .transport{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-shrink:0;
+  }
+
+  .play-ring{
+    position:relative;
+    width:56px; height:56px;
+    flex-shrink:0;
+    cursor:pointer;
+    border:none;
+    background:none;
+    padding:0;
+  }
+  .play-ring:disabled{ opacity:.4; cursor:not-allowed; }
+  .play-ring svg{ width:100%; height:100%; transform: rotate(-90deg); }
+  .play-ring .track-bg{ stroke: var(--line); fill:none; stroke-width:4; }
+  .play-ring .track-fg{ stroke: var(--gold); fill:none; stroke-width:4; stroke-linecap:round; transition: stroke-dashoffset .1s linear; }
+  .play-ring i{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem; color: var(--ink);
+  }
+
+  .solo-toggle{
+    width:38px; height:38px;
+    border-radius:50%;
+    border:1.5px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.9rem;
+    flex-shrink:0;
+    transition: all .2s ease;
+  }
+  .solo-toggle.active{ background: #3E7C59; border-color:#3E7C59; color:#fff; }
+  .solo-toggle.selecting{ background: var(--gold); border-color: var(--gold); color:#221803; }
+
+  .volume-wrap{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-shrink:0;
+  }
+  .volume-wrap i{ color: var(--gold); font-size:1rem; width:16px; text-align:center; }
+  .vol-slider{
+    width:64px; height:4px;
+    -webkit-appearance:none; appearance:none;
+    background: var(--line);
+    border-radius:4px;
+    outline:none;
+    cursor:pointer;
+  }
+  .vol-slider::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:12px; height:12px; border-radius:50%;
+    background: var(--gold); cursor:pointer;
+  }
+  .vol-slider::-moz-range-thumb{ width:12px; height:12px; border-radius:50%; background: var(--gold); border:none; cursor:pointer; }
+
+  /* ============ Drawer ============ */
+  .backdrop{
+    position:fixed; inset:0;
+    background: rgba(10,12,8,.5);
+    backdrop-filter: blur(2px);
+    opacity:0; pointer-events:none;
+    transition: opacity .25s ease;
+    z-index: 50;
+  }
+  .backdrop.show{ opacity:1; pointer-events:auto; }
+
+  .drawer{
+    position:fixed;
+    top:0; bottom:0;
+    right:0;
+    width: min(340px, 86vw);
+    background: var(--surface);
+    box-shadow: -12px 0 40px rgba(0,0,0,.25);
+    z-index: 60;
+    transform: translateX(100%);
+    transition: transform .3s cubic-bezier(.22,.9,.35,1);
+    display:flex;
+    flex-direction:column;
+    padding: 18px;
+    padding-top: max(18px, env(safe-area-inset-top));
+    overflow-y:auto;
+  }
+  .drawer.open{ transform: translateX(0); }
+
+  .drawer-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 18px;
+  }
+  .drawer-head h2{
+    font-family: var(--font-display);
+    font-size:1.15rem;
+  }
+
+  .drawer-section{ margin-bottom: 22px; }
+  .drawer-section h3{
+    font-size:.72rem;
+    font-weight:700;
+    color: var(--ink-soft);
+    letter-spacing:.6px;
+    margin-bottom:10px;
+  }
+
+  .pill-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .pill{
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--ink);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-weight:700;
+    font-size:.85rem;
+    cursor:pointer;
+  }
+  .pill.active{
+    background: var(--wine);
+    border-color: var(--wine);
+    color:#fff;
+  }
+
+  .song-list{ display:flex; flex-direction:column; gap:6px; }
+  .song-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:.88rem;
+    color: var(--ink);
+    transition: all .18s ease;
+  }
+  .song-item:hover{ border-color: var(--gold); }
+  .song-item.active{
+    background: linear-gradient(145deg, var(--gold-bright), var(--gold));
+    border-color: transparent;
+    color:#221803;
+  }
+  .song-item i{ opacity:0; font-size:.85rem; }
+  .song-item.active i{ opacity:1; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="app-shell">
+
+    <header class="appbar">
+      <button class="icon-btn" id="drawer-open" aria-label="القائمة"><i class="bi bi-list"></i></button>
+      <div class="brand">
+        <span class="title">ترانيم كورال</span>
+        <span class="sub">خدمة 5 و6</span>
+      </div>
+      <button class="icon-btn gold" id="theme-toggle" aria-label="تبديل المظهر">
+        <i class="bi bi-moon-stars-fill" id="theme-icon"></i>
+      </button>
+    </header>
+
+    <div class="mode-tabs">
+      <button class="mode-tab" data-mode="mi">موسيقى وكورال</button>
+      <button class="mode-tab" data-mode="m">موسيقى فقط</button>
+      <button class="mode-tab" data-mode="lyr">كلمات فقط</button>
+    </div>
+
+    <main class="stage">
+      <div class="empty-hint" id="empty-hint">
+        <i class="bi bi-music-note-beamed"></i>
+        <p>اختر ترنيمة من القائمة لعرض كلماتها والاستماع إليها</p>
+        <button id="empty-open-drawer">تصفّح الترانيم</button>
+      </div>
+
+      <div class="reel-wrap" id="reel-wrap">
+        <div class="now-marker"><i class="bi bi-music-note beat" id="beat-icon"></i></div>
+        <div class="reel" id="reel"></div>
+      </div>
+    </main>
+
+    <div class="solo-toast" id="solo-toast">
+      <span id="solo-toast-text"></span>
+      <button id="solo-toast-close"><i class="bi bi-x"></i></button>
+    </div>
+
+    <footer class="dock">
+      <input type="range" class="scrub" id="time-slider" min="0" max="100" value="0" step="1" aria-label="موضع التشغيل" disabled>
+      <div class="dock-row">
+        <div class="track-info">
+          <div class="name" id="track-name">اختر ترنيمة</div>
+          <div class="time"><span id="current-time">0:00</span> / <span id="total-time">0:00</span></div>
+        </div>
+
+        <div class="transport">
+          <button class="solo-toggle" id="solo-btn" aria-label="تحديد الصولو">
+            <i class="bi bi-mic-fill"></i>
+          </button>
+
+          <button class="play-ring" id="play-pause" disabled aria-label="تشغيل/إيقاف">
+            <svg viewBox="0 0 56 56">
+              <circle class="track-bg" cx="28" cy="28" r="24"></circle>
+              <circle class="track-fg" id="ring-fg" cx="28" cy="28" r="24" stroke-dasharray="150.8" stroke-dashoffset="150.8"></circle>
+            </svg>
+            <i class="bi bi-play-fill"></i>
+          </button>
+        </div>
+
+        <div class="volume-wrap">
+          <i class="bi bi-volume-up-fill" id="volume-icon"></i>
+          <input type="range" class="vol-slider" id="volume-slider" min="0" max="100" value="50" aria-label="مستوى الصوت">
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <div class="backdrop" id="backdrop"></div>
+  <nav class="drawer" id="drawer">
+    <div class="drawer-head">
+      <h2>الترانيم</h2>
+      <button class="icon-btn" id="drawer-close" aria-label="إغلاق"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <div class="drawer-section">
+      <h3>السنة</h3>
+      <div class="pill-row" id="year-pills"></div>
+    </div>
+
+    <div class="drawer-section">
+      <h3>الترنيمة</h3>
+      <div class="song-list" id="song-list"></div>
+    </div>
+  </nav>
+
+  <audio id="mi" preload="none"></audio>
+  <audio id="mu" preload="none"></audio>
+
+<script>
+(function(){
+  /* ============ Theme (cookie-based) ============ */
+  const root = document.documentElement;
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
+
+  function getCookie(name){
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+  function setCookie(name, val, days){
+    document.cookie = `${name}=${val}; path=/; max-age=${60*60*24*days}`;
+  }
+  function applyTheme(theme){
+    if (theme === 'dark'){
+      root.setAttribute('data-theme', 'dark');
+      themeIcon.className = 'bi bi-sun-fill';
+    } else {
+      root.removeAttribute('data-theme');
+      themeIcon.className = 'bi bi-moon-stars-fill';
+    }
+  }
+  const savedTheme = getCookie('theme');
+  const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'));
+  themeToggle.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    setCookie('theme', next, 365);
+  });
+
+  /* ============ Elements ============ */
+  const miaudio = document.getElementById('mi');
+  const maudio = document.getElementById('mu');
+  const modeTabs = document.querySelectorAll('.mode-tab');
+  const playPauseBtn = document.getElementById('play-pause');
+  const ringFg = document.getElementById('ring-fg');
+  const timeSlider = document.getElementById('time-slider');
+  const volumeSlider = document.getElementById('volume-slider');
+  const volumeIcon = document.getElementById('volume-icon');
+  const currentTimeDisplay = document.getElementById('current-time');
+  const totalTimeDisplay = document.getElementById('total-time');
+  const trackName = document.getElementById('track-name');
+  const soloBtn = document.getElementById('solo-btn');
+  const soloToast = document.getElementById('solo-toast');
+  const soloToastText = document.getElementById('solo-toast-text');
+  const soloToastClose = document.getElementById('solo-toast-close');
+  const emptyHint = document.getElementById('empty-hint');
+  const reelWrap = document.getElementById('reel-wrap');
+  const reel = document.getElementById('reel');
+  const beatIcon = document.getElementById('beat-icon');
+  const drawer = document.getElementById('drawer');
+  const backdrop = document.getElementById('backdrop');
+  const drawerOpenBtn = document.getElementById('drawer-open');
+  const drawerCloseBtn = document.getElementById('drawer-close');
+  const emptyOpenDrawerBtn = document.getElementById('empty-open-drawer');
+  const yearPillsEl = document.getElementById('year-pills');
+  const songListEl = document.getElementById('song-list');
+
+  const RING_CIRC = 2 * Math.PI * 24;
+
+  /* ============ State (same data / API logic as original) ============ */
+  let isUserScrolling = false;
+  let isSeeking = false;
+
+  let currentYear = '2025';
+  let currentSong = null;
+  let currentSongName = '';
+  let currentMode = null;
+  let running = false;
+  let autoPlay = true;
+  let captions = {};
+  let solo = { start: null, end: null, status: 'inactive', songId: null };
+
+  let yearSongs = {
+    "2025": [
+      { name: "عايشين معاك في هنا", index: 1 },
+      { name: "يسوع صديقي", index: 2 },
+      { name: "سما بتسبح", index: 3 },
+      { name: "لازم يشوفوك فيّ", index: 4 }
+    ],
+    "2024": [
+      { name: "روح وحياة", index: 1 },
+      { name: "الراجل العاقل", index: 2 },
+      { name: "كتابي جواه حكايات", index: 3 },
+      { name: "أسفار الكتاب المقدس", index: 4 },
+      { name: "اوبن بوك", index: 5 }
+    ]
+  };
+
+  init();
+
+  function init(){
+    loadSoloSettings();
+    miaudio.volume = 0.5;
+    maudio.volume = 0.5;
+    volumeSlider.value = 50;
+    updateVolumeIcon(50);
+    ringFg.style.strokeDasharray = RING_CIRC;
+    ringFg.style.strokeDashoffset = RING_CIRC;
+    renderYearPills();
+    renderSongList();
+    addEventListeners();
+    updateControlsDisabledState();
+  }
+
+  function addEventListeners(){
+    modeTabs.forEach(tab => tab.addEventListener('click', () => handlePlaybackModeChange(tab.dataset.mode)));
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    timeSlider.addEventListener('input', handleTimeSliderInput);
+    timeSlider.addEventListener('pointerdown', () => isSeeking = true);
+    timeSlider.addEventListener('pointerup', () => isSeeking = false);
+    volumeSlider.addEventListener('input', handleVolumeChange);
+    miaudio.addEventListener('timeupdate', updatePlayerUI);
+    miaudio.addEventListener('loadedmetadata', updateDurationDisplay);
+    miaudio.addEventListener('ended', handleAudioEnded);
+    maudio.addEventListener('ended', handleAudioEnded);
+    soloBtn.addEventListener('click', handleSoloButtonClick);
+    soloToastClose.addEventListener('click', resetSolo);
+
+    drawerOpenBtn.addEventListener('click', openDrawer);
+    drawerCloseBtn.addEventListener('click', closeDrawer);
+    emptyOpenDrawerBtn.addEventListener('click', openDrawer);
+    backdrop.addEventListener('click', closeDrawer);
+
+    document.querySelector('.stage').addEventListener('scroll', () => {}, { passive:true });
+  }
+
+  function openDrawer(){ drawer.classList.add('open'); backdrop.classList.add('show'); }
+  function closeDrawer(){ drawer.classList.remove('open'); backdrop.classList.remove('show'); }
+
+  /* ============ Drawer content ============ */
+  function renderYearPills(){
+    yearPillsEl.innerHTML = '';
+    Object.keys(yearSongs).forEach(year => {
+      const btn = document.createElement('button');
+      btn.className = 'pill' + (year === currentYear ? ' active' : '');
+      btn.textContent = year;
+      btn.addEventListener('click', () => handleYearChange(year));
+      yearPillsEl.appendChild(btn);
+    });
+  }
+
+  function renderSongList(){
+    songListEl.innerHTML = '';
+    yearSongs[currentYear].forEach(song => {
+      const item = document.createElement('div');
+      item.className = 'song-item' + (currentSong === String(song.index) ? ' active' : '');
+      item.innerHTML = `<span>${song.name}</span><i class="bi bi-check-circle-fill"></i>`;
+      item.addEventListener('click', () => handleSongChange(String(song.index), song.name));
+      songListEl.appendChild(item);
+    });
+  }
+
+  function updateControlsDisabledState(){
+    const disabled = !currentMode;
+    playPauseBtn.disabled = disabled;
+    timeSlider.disabled = disabled;
+  }
+
+  function handleYearChange(year){
+    currentYear = year;
+    currentSong = null;
+    currentSongName = '';
+    resetSolo();
+    trackName.textContent = 'اختر ترنيمة';
+    showEmptyState();
+    renderYearPills();
+    renderSongList();
+  }
+
+  function handleSongChange(songId, songName){
+    currentSong = songId;
+    currentSongName = songName;
+    trackName.textContent = songName;
+    renderSongList();
+    closeDrawer();
+
+    loadLyrics(`files/lyrics/${currentYear}/${songId}.txt`);
+
+    if (!currentMode || currentMode === 'lyr'){
+      if (currentMode === 'lyr') showReel();
+      return;
+    }
+
+    running = false;
+    miaudio.src = `files/${currentYear}/vocal/${songId}.mp3`;
+    maudio.src = `files/${currentYear}/music/${songId}.mp3`;
+
+    if (solo.songId !== songId) resetSolo();
+    syncMuteToMode();
+    showReel();
+
+    if (autoPlay) playAudio();
+    else updatePlayPauseButton(false);
+  }
+
+  function handlePlaybackModeChange(mode){
+    currentMode = mode;
+    modeTabs.forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+    updateControlsDisabledState();
+
+    if (!currentSong){ return; }
+
+    if (mode === 'lyr'){
+      pauseAudio();
+      showReel();
+      return;
+    }
+
+    if (!miaudio.src || !maudio.src){
+      miaudio.src = `files/${currentYear}/vocal/${currentSong}.mp3`;
+      maudio.src = `files/${currentYear}/music/${currentSong}.mp3`;
+    }
+
+    syncMuteToMode();
+    showReel();
+
+    if (autoPlay) playAudio();
+    else updatePlayPauseButton(false);
+
+    if (solo.status === 'active' && solo.songId === currentSong) saveSoloSettings();
+  }
+
+  function syncMuteToMode(){
+    if (solo.status === 'active' && solo.songId === currentSong){
+      handleSoloPlayback();
+      return;
+    }
+    if (currentMode === 'm'){
+      maudio.muted = false;
+      miaudio.muted = true;
+    } else {
+      maudio.muted = true;
+      miaudio.muted = false;
+    }
+  }
+
+  function showEmptyState(){
+    emptyHint.style.display = 'flex';
+    reelWrap.classList.remove('show');
+  }
+  function showReel(){
+    emptyHint.style.display = 'none';
+    reelWrap.classList.add('show');
+  }
+
+  function togglePlayPause(){
+    if (miaudio.paused) playAudio();
+    else pauseAudio();
+  }
+
+  function playAudio(){
+    miaudio.play().catch(e => console.error('Error playing audio:', e));
+    maudio.play().catch(e => console.error('Error playing audio:', e));
+    updatePlayPauseButton(true);
+    running = true;
+    beatIcon.classList.add('beat');
+  }
+
+  function pauseAudio(){
+    miaudio.pause();
+    maudio.pause();
+    updatePlayPauseButton(false);
+    beatIcon.classList.remove('beat');
+  }
+
+  function updatePlayPauseButton(isPlaying){
+    const icon = playPauseBtn.querySelector('i');
+    icon.className = isPlaying ? 'bi bi-pause-fill' : 'bi bi-play-fill';
+    if (!isPlaying) beatIcon.classList.remove('beat');
+  }
+
+  function handleTimeSliderInput(e){
+    if (!miaudio.duration) return;
+    const seekTime = (e.target.value / 100) * miaudio.duration;
+    miaudio.currentTime = seekTime;
+    maudio.currentTime = seekTime;
+    currentTimeDisplay.textContent = formatTime(seekTime);
+    setRingProgress(e.target.value / 100);
+  }
+
+  function handleVolumeChange(e){
+    const volume = e.target.value / 100;
+    miaudio.volume = volume;
+    maudio.volume = volume;
+    updateVolumeIcon(e.target.value);
+  }
+
+  function updateVolumeIcon(value){
+    volumeIcon.className = value == 0
+      ? 'bi bi-volume-mute-fill'
+      : value < 50
+        ? 'bi bi-volume-down-fill'
+        : 'bi bi-volume-up-fill';
+  }
+
+  function setRingProgress(fraction){
+    const offset = RING_CIRC * (1 - Math.min(Math.max(fraction, 0), 1));
+    ringFg.style.strokeDashoffset = offset;
+  }
+
+  function updatePlayerUI(){
+    if (!miaudio.duration) return;
+    const fraction = miaudio.currentTime / miaudio.duration;
+    if (!isSeeking){
+      timeSlider.value = fraction * 100;
+      setRingProgress(fraction);
+    }
+    currentTimeDisplay.textContent = formatTime(miaudio.currentTime);
+    highlightCurrentLyrics();
+    if (solo.status === 'active' && solo.songId === currentSong) handleSoloPlayback();
+  }
+
+  function updateDurationDisplay(){
+    totalTimeDisplay.textContent = formatTime(miaudio.duration);
+  }
+
+  function formatTime(seconds){
+    if (isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  }
+
+  function handleAudioEnded(){
+    running = false;
+    updatePlayPauseButton(false);
+  }
+
+  /* ============ Lyrics: teleprompter reel ============ */
+  let lineEls = [];
+  let lineTimes = [];
+  let lineHeight = 46;
+
+  async function loadLyrics(url){
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('lyrics not found');
+      const text = await response.text();
+      captions = {};
+      reel.innerHTML = '';
+      lineEls = [];
+      lineTimes = [];
+
+      text.split('\n').forEach(line => {
+        if (line.trim() === '') return;
+        const [timeStr, ...lyricParts] = line.split(' ');
+        const lyric = lyricParts.join(' ');
+        const [mins, secs] = timeStr.split(':').map(Number);
+        const seconds = mins * 60 + secs;
+        captions[seconds] = lyric;
+
+        const span = document.createElement('span');
+        span.className = 'line';
+        span.textContent = lyric;
+        span.dataset.time = seconds;
+        span.addEventListener('click', () => seekToLyric(seconds));
+        reel.appendChild(span);
+        lineEls.push(span);
+        lineTimes.push(seconds);
+      });
+
+      if (!lineEls.length){
+        const span = document.createElement('span');
+        span.className = 'line d0';
+        span.textContent = 'لا توجد كلمات متاحة لهذه الترنيمة';
+        reel.appendChild(span);
+      } else {
+        requestAnimationFrame(() => {
+          lineHeight = lineEls[0].offsetHeight || 46;
+          setActiveLine(0);
+        });
+      }
+    } catch (error){
+      console.error('Error loading lyrics:', error);
+      reel.innerHTML = '<span class="line d0">حدث خطأ في تحميل كلمات الترنيمة</span>';
+    }
+  }
+
+  function seekToLyric(time){
+    if (solo.status === 'selecting-start' || solo.status === 'selecting-end'){
+      handleLyricClickForSolo(time);
+      return;
+    }
+    if (currentMode === 'lyr' || !miaudio.duration) return;
+    miaudio.currentTime = time;
+    maudio.currentTime = time;
+    if (miaudio.paused) playAudio();
+  }
+
+  function setActiveLine(index){
+    lineEls.forEach((el, i) => {
+      el.classList.remove('d0', 'd1');
+      const diff = Math.abs(i - index);
+      if (diff === 0) el.classList.add('d0');
+      else if (diff === 1) el.classList.add('d1');
+    });
+    reel.style.transform = `translateY(${-(index * lineHeight)}px)`;
+  }
+
+  function highlightCurrentLyrics(){
+    if (!lineTimes.length) return;
+    const currentTime = miaudio.currentTime;
+    let closestIndex = 0;
+    let minDiff = Infinity;
+    lineTimes.forEach((t, i) => {
+      if (t <= currentTime){
+        const diff = currentTime - t;
+        if (diff < minDiff){ minDiff = diff; closestIndex = i; }
+      }
+    });
+    if (!isUserScrolling) setActiveLine(closestIndex);
+  }
+
+  /* ============ Solo selection ============ */
+  function showSoloToast(text){
+    soloToastText.textContent = text;
+    soloToast.classList.add('show');
+  }
+  function hideSoloToast(){ soloToast.classList.remove('show'); }
+
+  function handleSoloButtonClick(){
+    if (solo.status === 'active'){ resetSolo(); return; }
+    if (!currentSong){
+      showSoloToast('الرجاء اختيار ترنيمة أولاً');
+      setTimeout(hideSoloToast, 2200);
+      return;
+    }
+    solo.status = 'selecting-start';
+    soloBtn.classList.add('selecting');
+    autoPlay = false;
+    if (!miaudio.paused) pauseAudio();
+    showSoloToast('انقر على سطر بداية الصولو');
+  }
+
+  function handleLyricClickForSolo(time){
+    if (solo.status === 'selecting-start'){
+      solo.start = time;
+      solo.status = 'selecting-end';
+      showSoloToast('الآن انقر على سطر نهاية الصولو');
+    } else if (solo.status === 'selecting-end'){
+      solo.end = time;
+      solo.status = 'active';
+      solo.songId = currentSong;
+      soloBtn.classList.remove('selecting');
+      soloBtn.classList.add('active');
+      saveSoloSettings();
+      hideSoloToast();
+      autoPlay = true;
+      playAudio();
+    }
+  }
+
+  function handleSoloPlayback(){
+    const currentTime = miaudio.currentTime;
+    if (currentTime >= solo.start && currentTime <= solo.end){
+      maudio.muted = false;
+      miaudio.muted = true;
+    } else {
+      maudio.muted = true;
+      miaudio.muted = false;
+    }
+  }
+
+  function loadSoloSettings(){
+    const soloCookie = getCookie('solo');
+    if (soloCookie){
+      const [songId, start, end] = soloCookie.split(':');
+      solo = { start: parseFloat(start), end: parseFloat(end), status: 'active', songId };
+      soloBtn.classList.add('active');
+    }
+  }
+
+  function saveSoloSettings(){
+    setCookie('solo', `${solo.songId}:${solo.start}:${solo.end}`, 30);
+  }
+
+  function resetSolo(){
+    solo = { start: null, end: null, status: 'inactive', songId: null };
+    soloBtn.classList.remove('active', 'selecting');
+    document.cookie = 'solo=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    hideSoloToast();
+    syncMuteToMode();
+  }
+})();
+</script>
+</body>
+</html>

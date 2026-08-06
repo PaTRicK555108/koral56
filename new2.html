@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ترانيم كورال - خدمة 5و6 أولاد</title>
+<meta name="description" content="استمتع بترانيم الكورال مع تحكم كامل في التشغيل وعرض الكلمات المتزامنة">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2LMZ0Q29L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2LMZ0Q29L');
+</script>
+<style>
+  /* ============ Design tokens ============ */
+  :root{
+    --ink:#1B1F3B;
+    --ink-soft:#4A5077;
+    --gold:#B9891B;
+    --gold-bright:#E8C468;
+    --paper:#F1EEE2;
+    --paper-raised:#FFFFFF;
+    --paper-line:#E3DDC9;
+    --shadow:0 10px 30px -12px rgba(27,31,59,.18);
+    --shadow-soft:0 2px 10px rgba(27,31,59,.08);
+    --success:#3E7C59;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
+    --font-display:'Amiri', serif;
+    --font-body:'Cairo', sans-serif;
+    color-scheme: light;
+  }
+  [data-theme="dark"]{
+    --ink:#EDEAE0;
+    --ink-soft:#B7B4C9;
+    --gold:#E8C468;
+    --gold-bright:#F4D98A;
+    --paper:#0F1220;
+    --paper-raised:#181C30;
+    --paper-line:#2A2E48;
+    --shadow:0 10px 34px -10px rgba(0,0,0,.55);
+    --shadow-soft:0 2px 14px rgba(0,0,0,.35);
+    --success:#5FB98A;
+    color-scheme: dark;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  body{
+    font-family: var(--font-body);
+    background: var(--paper);
+    color: var(--ink);
+    min-height:100vh;
+    transition: background .35s ease, color .35s ease;
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(185,137,27,0.07), transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(185,137,27,0.06), transparent 40%);
+  }
+
+  .wrap{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  /* ============ Top bar ============ */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 22px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color: var(--ink-soft);
+    font-weight:600;
+    font-size:.85rem;
+    letter-spacing:.5px;
+  }
+  .brand i{ color: var(--gold); font-size:1.1rem; }
+
+  .theme-toggle{
+    width:42px; height:42px;
+    border-radius:50%;
+    border:1px solid var(--paper-line);
+    background: var(--paper-raised);
+    color: var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    font-size:1.05rem;
+    box-shadow: var(--shadow-soft);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .theme-toggle:hover{ transform: rotate(-12deg) scale(1.05); }
+  .theme-toggle:active{ transform: scale(.92); }
+
+  /* ============ Header ============ */
+  header.hero{
+    text-align:center;
+    padding: 18px 10px 26px;
+    margin-bottom: 26px;
+    position:relative;
+  }
+  header.hero h1{
+    font-family: var(--font-display);
+    font-weight:700;
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    color: var(--ink);
+  }
+  header.hero .tagline{
+    display:block;
+    margin-top:8px;
+    font-family: var(--font-body);
+    font-weight:600;
+    font-size:1rem;
+    color: var(--gold);
+    letter-spacing:.5px;
+  }
+  .staff-divider{
+    width:100%;
+    max-width: 260px;
+    margin: 18px auto 0;
+    height: 14px;
+    opacity:.55;
+  }
+  .staff-divider svg{ width:100%; height:100%; display:block; }
+  .staff-divider path{ stroke: var(--gold); }
+
+  /* ============ Controls (selectors) ============ */
+  .controls{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .select-group label{
+    display:block;
+    margin-bottom:6px;
+    font-size:.8rem;
+    font-weight:700;
+    color: var(--ink-soft);
+  }
+  .select-shell{
+    position:relative;
+    background: var(--paper-raised);
+    border: 1px solid var(--paper-line);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-soft);
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .select-shell:focus-within{
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(185,137,27,.18);
+  }
+  .select-shell i{
+    position:absolute;
+    inset-inline-start: 12px;
+    top:50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    pointer-events:none;
+    font-size: .8rem;
+  }
+  .form-select{
+    width:100%;
+    appearance:none;
+    -webkit-appearance:none;
+    background: transparent;
+    border:none;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-weight:600;
+    font-size: .92rem;
+    padding: 12px 34px 12px 14px;
+    cursor:pointer;
+  }
+  .form-select:focus{ outline:none; }
+  .form-select option{ color:#1B1F3B; }
+
+  /* ============ Player card ============ */
+  .player{
+    background: var(--paper-raised);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    box-shadow: var(--shadow);
+    margin-bottom: 22px;
+    border: 1px solid var(--paper-line);
+  }
+  .player-controls{
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .control-btn{
+    flex-shrink:0;
+    width:58px; height:58px;
+    border-radius:50%;
+    border:none;
+    cursor:pointer;
+    font-size:1.4rem;
+    color:#1B1F3B;
+    background: linear-gradient(145deg, var(--gold-bright), var(--gold));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 8px 18px -6px rgba(185,137,27,.55);
+    transition: transform .18s ease, box-shadow .18s ease, opacity .2s ease;
+  }
+  .control-btn:hover:not(:disabled){ transform: scale(1.06); }
+  .control-btn:active:not(:disabled){ transform: scale(.94); }
+  .control-btn:disabled{ opacity:.4; cursor:not-allowed; box-shadow:none; }
+
+  .time-control{ flex:1; min-width:0; }
+  .slider{
+    width:100%;
+    height:6px;
+    -webkit-appearance:none;
+    appearance:none;
+    background: var(--paper-line);
+    border-radius:5px;
+    outline:none;
+    cursor:pointer;
+  }
+  .slider::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    appearance:none;
+    width:16px; height:16px;
+    border-radius:50%;
+    background: var(--gold);
+    border: 2px solid var(--paper-raised);
+    box-shadow: 0 1px 4px rgba(0,0,0,.3);
+    cursor:pointer;
+  }
+  .slider::-moz-range-thumb{
+    width:16px; height:16px;
+    border-radius:50%;
+    background: var(--gold);
+    border: 2px solid var(--paper-raised);
+    cursor:pointer;
+  }
+  .slider:disabled{ opacity:.45; cursor:not-allowed; }
+  .time-display{
+    display:flex;
+    justify-content:space-between;
+    font-size:.78rem;
+    color: var(--ink-soft);
+    margin-top:6px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .volume-control{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    min-width: 110px;
+  }
+  .volume-control i{ color: var(--gold); font-size:1.05rem; width:18px; text-align:center; }
+  .volume-control .slider{ width:80px; }
+
+  .solo-row{
+    display:flex;
+    justify-content:center;
+    margin-top:18px;
+  }
+  .solo-btn{
+    background: transparent;
+    border: 1.5px solid var(--gold);
+    color: var(--gold);
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-weight:700;
+    font-size: .85rem;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition: all .2s ease;
+  }
+  .solo-btn:hover{ background: rgba(185,137,27,.1); }
+  .solo-btn.active{
+    background: var(--success);
+    border-color: var(--success);
+    color:#fff;
+  }
+  .solo-btn.selecting{
+    background: var(--gold);
+    color:#1B1F3B;
+    border-color: var(--gold);
+  }
+
+  .solo-banner{
+    max-width: 460px;
+    margin: 14px auto 0;
+    background: rgba(185,137,27,.12);
+    border: 1px dashed var(--gold);
+    color: var(--ink);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: .85rem;
+    text-align:center;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+  }
+  .solo-banner.show{ display:flex; }
+  .solo-banner button{
+    background:none; border:none; color: var(--gold); font-weight:700; cursor:pointer;
+    text-decoration:underline;
+    font-family: var(--font-body);
+    font-size:.8rem;
+  }
+
+  /* ============ Lyrics ============ */
+  .lyrics-container{
+    background: var(--paper-raised);
+    border-radius: var(--radius-lg);
+    padding: 26px 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--paper-line);
+    min-height: 220px;
+    max-height: 420px;
+    overflow-y: auto;
+    scroll-behavior:smooth;
+  }
+  .lyrics-container::-webkit-scrollbar{ width:8px; }
+  .lyrics-container::-webkit-scrollbar-thumb{ background: var(--paper-line); border-radius:8px; }
+
+  .lyrics{
+    text-align:center;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    line-height: 2.15;
+    user-select:none;
+    color: var(--ink-soft);
+  }
+  .lyrics .empty-state{
+    font-family: var(--font-body);
+    font-size: .95rem;
+    color: var(--ink-soft);
+    opacity:.75;
+  }
+  .line{
+    display:inline-block;
+    margin:2px 0;
+    padding:3px 10px;
+    border-radius:6px;
+    cursor:pointer;
+    transition: all .25s ease;
+  }
+  .line:hover{ background: rgba(185,137,27,.12); color: var(--ink); }
+  .line.highlight{
+    color: var(--gold);
+    font-weight:700;
+    transform: scale(1.06);
+    text-shadow: 0 0 18px rgba(232,196,104,.5);
+  }
+
+  footer.credit{
+    text-align:center;
+    margin-top: 26px;
+    font-size:.75rem;
+    color: var(--ink-soft);
+    opacity:.7;
+  }
+
+  @media (max-width: 640px){
+    .controls{ grid-template-columns: 1fr; }
+    .player-controls{ flex-wrap:wrap; }
+    .volume-control{ order:3; width:100%; margin-top:6px; }
+    .time-control{ order:2; flex-basis:100%; }
+    .control-btn{ order:1; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><i class="bi bi-music-note-beamed"></i><span>كورال ترانيم</span></div>
+      <button id="theme-toggle" class="theme-toggle" title="تبديل المظهر" aria-label="تبديل المظهر الفاتح/الداكن">
+        <i class="bi bi-moon-stars-fill" id="theme-icon"></i>
+      </button>
+    </div>
+
+    <header class="hero">
+      <h1>ترانيم كورال</h1>
+      <span class="tagline">خدمة 5 و6</span>
+      <div class="staff-divider">
+        <svg viewBox="0 0 260 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 7 H100" stroke-width="1.5"/>
+          <circle cx="130" cy="7" r="5" fill="var(--gold)" stroke="none"/>
+          <path d="M160 7 H260" stroke-width="1.5"/>
+        </svg>
+      </div>
+    </header>
+
+    <div class="controls">
+      <div class="select-group">
+        <label for="year">السنة</label>
+        <div class="select-shell">
+          <i class="bi bi-calendar3"></i>
+          <select id="year" class="form-select">
+            <option value="2025" selected>2025</option>
+            <option value="2024">2024</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="select-group">
+        <label for="files">الترنيمة</label>
+        <div class="select-shell">
+          <i class="bi bi-music-note-list"></i>
+          <select id="files" class="form-select">
+            <option value="null" selected>اختر</option>
+            <option value="1">عايشين معاك في هنا</option>
+            <option value="2">يسوع صديقي</option>
+            <option value="3">سما بتسبح</option>
+            <option value="4">لازم يشوفوك فيّ</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="select-group">
+        <label for="mma">النوع</label>
+        <div class="select-shell">
+          <i class="bi bi-sliders"></i>
+          <select id="mma" class="form-select">
+            <option value="null" selected>اختر</option>
+            <option value="mi">موسيقى وكورال</option>
+            <option value="m">موسيقى فقط</option>
+            <option value="lyr">كلمات فقط</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="player" id="player-card">
+      <div class="player-controls">
+        <button id="play-pause" class="control-btn" aria-label="تشغيل/إيقاف">
+          <i class="bi bi-play-fill"></i>
+        </button>
+
+        <div class="time-control">
+          <input type="range" id="time-slider" class="slider" min="0" max="100" value="0" step="1" aria-label="موضع التشغيل">
+          <div class="time-display">
+            <span id="current-time">0:00</span>
+            <span id="total-time">0:00</span>
+          </div>
+        </div>
+
+        <div class="volume-control">
+          <i class="bi bi-volume-up-fill" id="volume-icon"></i>
+          <input type="range" id="volume-slider" class="slider" min="0" max="100" value="50" aria-label="مستوى الصوت">
+        </div>
+      </div>
+
+      <div class="solo-row">
+        <button id="solo-btn" class="solo-btn" style="display:none">
+          <i class="bi bi-mic-fill"></i> تحديد الصولو
+        </button>
+      </div>
+      <div class="solo-banner" id="solo-banner">
+        <span id="solo-banner-text"></span>
+        <button id="solo-cancel">إلغاء</button>
+      </div>
+    </div>
+
+    <div class="lyrics-container">
+      <div id="caption" class="lyrics"><span class="empty-state">اختر ترنيمة لعرض الكلمات هنا</span></div>
+    </div>
+
+    <footer class="credit">كورال خدمة 5 و6 &middot; ترانيم</footer>
+
+    <audio id="mi" preload="none"></audio>
+    <audio id="mu" preload="none"></audio>
+  </div>
+
+<script>
+(function(){
+  /* ============ Theme handling (cookie-based, no localStorage) ============ */
+  const root = document.documentElement;
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
+
+  function getCookie(name){
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+  function setCookie(name, val, days){
+    document.cookie = `${name}=${val}; path=/; max-age=${60*60*24*days}`;
+  }
+
+  function applyTheme(theme){
+    if (theme === 'dark'){
+      root.setAttribute('data-theme', 'dark');
+      themeIcon.className = 'bi bi-sun-fill';
+    } else {
+      root.removeAttribute('data-theme');
+      themeIcon.className = 'bi bi-moon-stars-fill';
+    }
+  }
+
+  const savedTheme = getCookie('theme');
+  const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'));
+
+  themeToggle.addEventListener('click', () => {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    const next = isDark ? 'light' : 'dark';
+    applyTheme(next);
+    setCookie('theme', next, 365);
+  });
+
+  /* ============ Elements ============ */
+  const miaudio = document.getElementById('mi');
+  const maudio = document.getElementById('mu');
+  const yearSelect = document.getElementById('year');
+  const filesSelect = document.getElementById('files');
+  const mmaSelect = document.getElementById('mma');
+  const playPauseBtn = document.getElementById('play-pause');
+  const timeSlider = document.getElementById('time-slider');
+  const volumeSlider = document.getElementById('volume-slider');
+  const volumeIcon = document.getElementById('volume-icon');
+  const currentTimeDisplay = document.getElementById('current-time');
+  const totalTimeDisplay = document.getElementById('total-time');
+  const soloBtn = document.getElementById('solo-btn');
+  const soloBanner = document.getElementById('solo-banner');
+  const soloBannerText = document.getElementById('solo-banner-text');
+  const soloCancelBtn = document.getElementById('solo-cancel');
+  const captionElement = document.getElementById('caption');
+  const playerCard = document.getElementById('player-card');
+
+  /* ============ State (same data / API logic as original) ============ */
+  let isUserScrolling = false;
+  let scrollTimeout;
+  let isProgrammaticScroll = false;
+  let isSeeking = false;
+
+  let currentYear = '2025';
+  let currentSong = null;
+  let running = false;
+  let autoPlay = true;
+  let captions = {};
+  let formattedCaptions = {};
+  let solo = { start: null, end: null, status: 'inactive', songId: null };
+
+  let yearSongs = {
+    "2025": [
+      { name: "عايشين معاك في هنا", index: 1 },
+      { name: "يسوع صديقي", index: 2 },
+      { name: "سما بتسبح", index: 3 },
+      { name: "لازم يشوفوك فيّ", index: 4 }
+    ],
+    "2024": [
+      { name: "روح وحياة", index: 1 },
+      { name: "الراجل العاقل", index: 2 },
+      { name: "كتابي جواه حكايات", index: 3 },
+      { name: "أسفار الكتاب المقدس", index: 4 },
+      { name: "اوبن بوك", index: 5 }
+    ]
+  };
+
+  init();
+
+  function init(){
+    loadSoloSettings();
+    miaudio.volume = 0.5;
+    maudio.volume = 0.5;
+    volumeSlider.value = 50;
+    updateVolumeIcon(50);
+    addEventListeners();
+    updateControlsDisabledState();
+  }
+
+  function addEventListeners(){
+    yearSelect.addEventListener('change', handleYearChange);
+    filesSelect.addEventListener('change', handleSongChange);
+    mmaSelect.addEventListener('change', handlePlaybackModeChange);
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    timeSlider.addEventListener('input', handleTimeSliderInput);
+    timeSlider.addEventListener('pointerdown', () => isSeeking = true);
+    timeSlider.addEventListener('pointerup', () => isSeeking = false);
+    volumeSlider.addEventListener('input', handleVolumeChange);
+    miaudio.addEventListener('timeupdate', updatePlayerUI);
+    miaudio.addEventListener('loadedmetadata', updateDurationDisplay);
+    miaudio.addEventListener('ended', handleAudioEnded);
+    maudio.addEventListener('ended', handleAudioEnded);
+    soloBtn.addEventListener('click', handleSoloButtonClick);
+    soloCancelBtn.addEventListener('click', resetSolo);
+  }
+
+  function updateControlsDisabledState(){
+    const mode = mmaSelect.value;
+    const disabled = (mode === 'null' || mode === '' || mode == null);
+    playPauseBtn.disabled = disabled;
+    timeSlider.disabled = disabled;
+  }
+
+  function handleYearChange(e){
+    currentYear = e.target.value;
+    let filesString = '<option value="null" selected>اختر</option>';
+    yearSongs[currentYear].forEach(file => {
+      filesString += `<option value="${file.index}">${file.name}</option>`;
+    });
+    filesSelect.innerHTML = filesString;
+    resetSolo();
+    currentSong = null;
+    captionElement.innerHTML = '<span class="empty-state">اختر ترنيمة لعرض الكلمات هنا</span>';
+  }
+
+  function handleSongChange(e){
+    const songId = e.target.value;
+    if (songId === 'null') return;
+
+    currentSong = songId;
+    loadLyrics(`files/${currentYear}/lyrics/${songId}.txt`);
+    updateControlsDisabledState();
+
+    if (mmaSelect.value === 'null' || mmaSelect.value === 'lyr') return;
+
+    running = false;
+    miaudio.src = `files/${currentYear}/vocal/${songId}.mp3`;
+    maudio.src = `files/${currentYear}/music/${songId}.mp3`;
+
+    if (solo.songId !== songId) resetSolo();
+
+    syncMuteToMode();
+
+    if (autoPlay) playAudio();
+    else updatePlayPauseButton(false);
+  }
+
+  function handlePlaybackModeChange(){
+    const mode = mmaSelect.value;
+    updateControlsDisabledState();
+
+    if (!currentSong || currentSong === 'null') return;
+
+    if (mode === 'mi' || mode === 'm'){
+      playerCard.style.display = 'block';
+    } else if (mode === 'lyr'){
+      playerCard.style.display = 'none';
+      pauseAudio();
+      return;
+    } else {
+      pauseAudio();
+      return;
+    }
+
+    if (!miaudio.src || !maudio.src){
+      miaudio.src = `files/${currentYear}/vocal/${currentSong}.mp3`;
+      maudio.src = `files/${currentYear}/music/${currentSong}.mp3`;
+    }
+
+    syncMuteToMode();
+
+    if (autoPlay) playAudio();
+    else updatePlayPauseButton(false);
+
+    if (solo.status === 'active' && solo.songId === currentSong) saveSoloSettings();
+  }
+
+  // Keeps mute state consistent with the selected playback mode,
+  // and respects an active solo selection when relevant.
+  function syncMuteToMode(){
+    const mode = mmaSelect.value;
+    if (solo.status === 'active' && solo.songId === currentSong){
+      handleSoloPlayback();
+      return;
+    }
+    if (mode === 'm'){
+      maudio.muted = false;
+      miaudio.muted = true;
+    } else {
+      maudio.muted = true;
+      miaudio.muted = false;
+    }
+  }
+
+  function togglePlayPause(){
+    if (miaudio.paused) playAudio();
+    else pauseAudio();
+  }
+
+  function playAudio(){
+    miaudio.play().catch(e => console.error('Error playing audio:', e));
+    maudio.play().catch(e => console.error('Error playing audio:', e));
+    updatePlayPauseButton(true);
+    running = true;
+  }
+
+  function pauseAudio(){
+    miaudio.pause();
+    maudio.pause();
+    updatePlayPauseButton(false);
+  }
+
+  function updatePlayPauseButton(isPlaying){
+    const icon = playPauseBtn.querySelector('i');
+    icon.className = isPlaying ? 'bi bi-pause-fill' : 'bi bi-play-fill';
+  }
+
+  function handleTimeSliderInput(e){
+    if (!miaudio.duration) return;
+    const seekTime = (e.target.value / 100) * miaudio.duration;
+    miaudio.currentTime = seekTime;
+    maudio.currentTime = seekTime;
+    currentTimeDisplay.textContent = formatTime(seekTime);
+  }
+
+  function handleVolumeChange(e){
+    const volume = e.target.value / 100;
+    miaudio.volume = volume;
+    maudio.volume = volume;
+    updateVolumeIcon(e.target.value);
+  }
+
+  function updateVolumeIcon(value){
+    volumeIcon.className = value == 0
+      ? 'bi bi-volume-mute-fill'
+      : value < 50
+        ? 'bi bi-volume-down-fill'
+        : 'bi bi-volume-up-fill';
+  }
+
+  function updatePlayerUI(){
+    if (!miaudio.duration) return;
+    if (!isSeeking){
+      const progress = (miaudio.currentTime / miaudio.duration) * 100;
+      timeSlider.value = progress;
+    }
+    currentTimeDisplay.textContent = formatTime(miaudio.currentTime);
+    highlightCurrentLyrics();
+    if (solo.status === 'active' && solo.songId === currentSong) handleSoloPlayback();
+  }
+
+  function updateDurationDisplay(){
+    totalTimeDisplay.textContent = formatTime(miaudio.duration);
+  }
+
+  function formatTime(seconds){
+    if (isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  }
+
+  function handleAudioEnded(){
+    running = false;
+    updatePlayPauseButton(false);
+  }
+
+  async function loadLyrics(url){
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('lyrics not found');
+      const text = await response.text();
+      captions = {};
+      formattedCaptions = {};
+      captionElement.innerHTML = '';
+      let lastSeconds = 0;
+      let isNewLine = false;
+      text.split('\n').forEach(line => {
+        if (line.trim() === ''){
+          captions[lastSeconds + 1] = '';
+          isNewLine = true;
+          captionElement.innerHTML += '<br>';
+          return;
+        }
+        const [timeStr, ...lyricParts] = line.split(' ');
+        const lyric = lyricParts.join(' ');
+        const [mins, secs] = timeStr.split(':').map(Number);
+        const seconds = mins * 60 + secs;
+        lastSeconds = seconds;
+        captions[seconds] = lyric;
+        formattedCaptions[seconds] = isNewLine ? '<br>' + lyric : lyric;
+        isNewLine = false;
+        const lineElement = document.createElement('span');
+        lineElement.className = 'line';
+        lineElement.textContent = lyric;
+        lineElement.dataset.time = seconds;
+        lineElement.addEventListener('click', () => seekToLyric(seconds));
+        captionElement.appendChild(lineElement);
+        captionElement.appendChild(document.createElement('br'));
+      });
+      if (!captionElement.innerHTML.trim()){
+        captionElement.innerHTML = '<span class="empty-state">لا توجد كلمات متاحة لهذه الترنيمة</span>';
+      }
+    } catch (error){
+      console.error('Error loading lyrics:', error);
+      captionElement.innerHTML = '<span class="empty-state">حدث خطأ في تحميل كلمات الترنيمة</span>';
+    }
+  }
+
+  function seekToLyric(time){
+    if (solo.status === 'selecting-start' || solo.status === 'selecting-end'){
+      handleLyricClickForSolo(time);
+      return;
+    }
+    if (mmaSelect.value === 'lyr') return;
+    if (!miaudio.duration) return;
+    miaudio.currentTime = time;
+    maudio.currentTime = time;
+    if (miaudio.paused) playAudio();
+  }
+
+  function highlightCurrentLyrics(){
+    const currentTime = miaudio.currentTime;
+    const lines = Array.from(captionElement.querySelectorAll('.line'));
+    if (!lines.length) return;
+    const times = lines.map(line => parseFloat(line.dataset.time));
+    let closestTime = null;
+    let minDiff = Infinity;
+    times.forEach(time => {
+      if (time <= currentTime){
+        const diff = currentTime - time;
+        if (diff < minDiff){
+          minDiff = diff;
+          closestTime = time;
+        }
+      }
+    });
+
+    lines.forEach(line => line.classList.remove('highlight'));
+
+    const target = closestTime !== null
+      ? lines.find(line => parseFloat(line.dataset.time) === closestTime)
+      : lines[0];
+
+    if (target){
+      target.classList.add('highlight');
+      if (!isUserScrolling){
+        isProgrammaticScroll = true;
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => isProgrammaticScroll = false, 50);
+      }
+    }
+  }
+
+  /* ============ Solo selection (banner replaces blocking alerts) ============ */
+  function showSoloBanner(text){
+    soloBannerText.textContent = text;
+    soloBanner.classList.add('show');
+  }
+  function hideSoloBanner(){
+    soloBanner.classList.remove('show');
+  }
+
+  function handleSoloButtonClick(){
+    if (solo.status === 'active'){
+      resetSolo();
+      return;
+    }
+    if (!currentSong || currentSong === 'null'){
+      showSoloBanner('الرجاء اختيار ترنيمة أولاً');
+      setTimeout(hideSoloBanner, 2500);
+      return;
+    }
+    solo.status = 'selecting-start';
+    soloBtn.classList.add('selecting');
+    soloBtn.innerHTML = '<i class="bi bi-mic-fill"></i> اختيار البداية';
+    autoPlay = false;
+    if (!miaudio.paused) pauseAudio();
+    showSoloBanner('انقر على السطر الذي يحدد بداية الصولو');
+  }
+
+  function handleLyricClickForSolo(time){
+    if (solo.status === 'selecting-start'){
+      solo.start = time;
+      solo.status = 'selecting-end';
+      soloBtn.innerHTML = '<i class="bi bi-mic-fill"></i> اختيار النهاية';
+      showSoloBanner('الآن انقر على السطر الذي يلي نهاية الصولو');
+    } else if (solo.status === 'selecting-end'){
+      solo.end = time;
+      solo.status = 'active';
+      solo.songId = currentSong;
+      soloBtn.classList.remove('selecting');
+      soloBtn.classList.add('active');
+      soloBtn.innerHTML = '<i class="bi bi-mic-fill"></i> إزالة الصولو';
+      saveSoloSettings();
+      hideSoloBanner();
+      autoPlay = true;
+      playAudio();
+    }
+  }
+
+  function handleSoloPlayback(){
+    const currentTime = miaudio.currentTime;
+    if (currentTime >= solo.start && currentTime <= solo.end){
+      maudio.muted = false;
+      miaudio.muted = true;
+    } else {
+      maudio.muted = true;
+      miaudio.muted = false;
+    }
+  }
+
+  function loadSoloSettings(){
+    const soloCookie = getCookie('solo');
+    if (soloCookie){
+      const [songId, start, end] = soloCookie.split(':');
+      solo = { start: parseFloat(start), end: parseFloat(end), status: 'active', songId };
+      soloBtn.classList.add('active');
+      soloBtn.innerHTML = '<i class="bi bi-mic-fill"></i> إزالة الصولو';
+    }
+  }
+
+  function saveSoloSettings(){
+    const cookieValue = `${solo.songId}:${solo.start}:${solo.end}`;
+    setCookie('solo', cookieValue, 30);
+  }
+
+  function resetSolo(){
+    solo = { start: null, end: null, status: 'inactive', songId: null };
+    soloBtn.classList.remove('active', 'selecting');
+    soloBtn.innerHTML = '<i class="bi bi-mic-fill"></i> تحديد الصولو';
+    document.cookie = 'solo=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    hideSoloBanner();
+    syncMuteToMode();
+  }
+
+  document.querySelector('.lyrics-container').addEventListener('scroll', () => {
+    if (isProgrammaticScroll) return isProgrammaticScroll = false;
+    isUserScrolling = true;
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => { isUserScrolling = false; }, 2000);
+  });
+})();
+</script>
+</body>
+</html>
